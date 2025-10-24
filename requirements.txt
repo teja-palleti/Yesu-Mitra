@@ -1,0 +1,5 @@
+flask==3.0.0
+gtts==2.5.4
+openai==2.6.1
+gunicorn==21.2.0
+
