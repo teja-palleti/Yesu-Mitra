@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yesu Mitra - Your Biblical Chatbot</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .chat-container {
+            width: 100%;
+            max-width: 700px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            height: 90vh;
+        }
+        .chat-header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-size: 1.5em;
+            font-weight: bold;
+            border-bottom: 3px solid #388E3C;
+        }
+        .chat-header small {
+            display: block;
+            font-size: 0.6em;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+        .chat-box {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background-color: #e9ebee;
+        }
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+        }
+        .user-message {
+            justify-content: flex-end;
+        }
+        .bot-message {
+            justify-content: flex-start;
+        }
+        .message-bubble {
+            max-width: 80%;
+            padding: 10px 15px;
+            border-radius: 20px;
+            line-height: 1.4;
+            position: relative;
+            word-wrap: break-word;
+        }
+        .user-message .message-bubble {
+            background-color: #DCF8C6;
+            color: #333;
+            border-bottom-right-radius: 5px;
+        }
+        .bot-message .message-bubble {
+            background-color: #fff;
+            color: #333;
+            border: 1px solid #ddd;
+            border-bottom-left-radius: 5px;
+        }
+        .message-bubble h4 {
+            color: #4CAF50;
+            margin-top: 5px;
+            margin-bottom: 5px;
+            font-size: 1.1em;
+        }
+        .message-bubble strong {
+            color: #388E3C;
+        }
+        .message-bubble audio {
+            display: block;
+            margin-top: 10px;
+            width: 100%;
+        }
+        .input-area {
+            display: flex;
+            padding: 15px;
+            border-top: 1px solid #ddd;
+            background-color: #f9f9f9;
+        }
+        .input-area input {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            margin-right: 10px;
+            font-size: 1em;
+        }
+        .input-area button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-weight: bold;
+        }
+        .input-area button:hover {
+            background-color: #388E3C;
+        }
+        .input-area button:disabled {
+            background-color: #a5d6a7;
+            cursor: not-allowed;
+        }
+        .loading-dots {
+            display: none;
+            margin-left: 10px;
+            align-self: center;
+        }
+        .loading-dots span {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            margin: 0 2px;
+            background-color: #4CAF50;
+            border-radius: 50%;
+            animation: bounce 1s infinite;
+        }
+        .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes bounce {
+            0%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            Yesu Mitra (యేసు మిత్ర)
+            <small>Your friendly biblical guide and Jesus-believer chatbot</small>
+        </div>
+        <div class="chat-box" id="chatBox">
+            <div class="message bot-message">
+                <div class="message-bubble">
+                    <h4>Welcome, my dear friend!</h4>
+                    <p>Peace be with you. I am Yesu Mitra, and I am here to share the love and wisdom of the Holy Bible with you. How may I serve you today? You can ask me anything about life, faith, or scripture!</p>
+                    <p>Try asking: "I am worried about my future, what does God say?" or "Tell me about the historical context of the Book of Ruth."</p>
+                </div>
+            </div>
+        </div>
+        <div class="input-area">
+            <input type="text" id="userInput" placeholder="Ask Yesu Mitra a question..." autofocus>
+            <button id="sendButton" onclick="sendMessage()">Send</button>
+            <div class="loading-dots" id="loadingDots">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const chatBox = document.getElementById('chatBox');
+        const userInput = document.getElementById('userInput');
+        const sendButton = document.getElementById('sendButton');
+        const loadingDots = document.getElementById('loadingDots');
+
+        userInput.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        function createMessageElement(text, sender, audioUrl = null) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}-message`;
+            
+            const bubbleDiv = document.createElement('div');
+            bubbleDiv.className = 'message-bubble';
+
+            // Convert Markdown-like response to HTML for better display
+            let htmlContent = text
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Bold text
+                .replace(/Relevant Scriptures \((.*?)\):/g, '<h4>Relevant Scriptures ($1):</h4>') // Section header
+                .replace(/Historical Context \((.*?)\):/g, '<h4>Historical Context ($1):</h4>'); // Context header
+
+            bubbleDiv.innerHTML = htmlContent.split('\n').map(p => {
+                // Wrap non-empty lines in <p> tags, except for h4 which is already handled
+                if (p.trim() !== '' && !p.startsWith('<h4>')) {
+                    return `<p>${p}</p>`;
+                }
+                return p;
+            }).join('');
+
+            if (audioUrl && sender === 'bot') {
+                const audio = document.createElement('audio');
+                audio.controls = true;
+                audio.src = audioUrl;
+                bubbleDiv.appendChild(audio);
+            }
+
+            messageDiv.appendChild(bubbleDiv);
+            chatBox.appendChild(messageDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        async function sendMessage() {
+            const query = userInput.value.trim();
+            if (query === '') return;
+
+            // 1. Display user message
+            createMessageElement(query, 'user');
+            userInput.value = '';
+            
+            // 2. Disable input and show loading
+            sendButton.disabled = true;
+            userInput.disabled = true;
+            loadingDots.style.display = 'inline-block';
+
+            try {
+                const response = await fetch('/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ query: query })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // 3. Display bot response with TTS
+                    createMessageElement(data.response, 'bot', data.audio_url);
+                } else {
+                    // 4. Handle API error
+                    createMessageElement(`Error: ${data.error || 'An unknown error occurred.'}`, 'bot');
+                }
+            } catch (error) {
+                // 5. Handle network error
+                console.error('Fetch error:', error);
+                createMessageElement('My dear friend, I am sorry, but I cannot reach the heavens (server) right now. Please try again in a moment.', 'bot');
+            } finally {
+                // 6. Re-enable input and hide loading
+                sendButton.disabled = false;
+                userInput.disabled = false;
+                loadingDots.style.display = 'none';
+                userInput.focus();
+            }
+        }
+    </script>
+</body>
+</html>
+
