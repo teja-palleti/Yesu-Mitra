@@ -1,12 +1,9 @@
 # Yesu Mitra - Biblical Chatbot (Ready to Use!)
 
-## 🎉 Your Complete Chatbot Package
-
 This package contains **everything** you need to run your Telugu Biblical Chatbot!
 
 ### ✅ What's Included:
 
-- ✅ **Pre-configured Groq API** - Your API key is already embedded
 - ✅ **Web interface** - Beautiful chat UI
 - ✅ **Telugu Text-to-Speech** - Audio playback
 - ✅ **All features working** - RAG, semantic search, contextual notes
@@ -72,7 +69,7 @@ yesu_mitra_chatbot/
 
 Your API key is already embedded in `chatbot_backend.py`:
 ```
-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
+Your API KEY Here
 ```
 
 **Keep this secure!** Don't share this package publicly with your API key in it.
