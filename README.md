@@ -137,23 +137,6 @@ Perfect for personal use!
 
 ---
 
-## 🌐 Deploying Online
-
-Want to deploy this chatbot to a website?
-
-### Recommended Platforms:
-1. **Render** - https://render.com (Free tier available)
-2. **Heroku** - https://heroku.com (Free tier available)
-3. **Railway** - https://railway.app (Free $5/month credit)
-
-### Deployment Steps:
-1. Create account on chosen platform
-2. Connect your GitHub repository (or upload files)
-3. Set environment variable: `GROQ_API_KEY=your-key`
-4. Deploy!
-
----
-
 ## 📖 Bible Data Source
 
 The Telugu Bible data is sourced from:
@@ -161,18 +144,6 @@ The Telugu Bible data is sourced from:
 - **Format:** JSON
 - **Size:** 11.2 MB
 - **License:** Open Source
-
----
-
-## 🙏 Support
-
-If you need help:
-
-1. Check this README
-2. Check the error messages carefully
-3. Make sure all dependencies are installed
-4. Verify `telugu_bible.json` exists
-
 ---
 
 ## ✝️ May God Bless You!
@@ -201,12 +172,6 @@ The Groq API is free for personal projects.
 
 ## 🔒 Security Note
 
-**IMPORTANT:** Your API key is embedded in `chatbot_backend.py`. 
-
-If you plan to share this code or deploy it publicly:
-1. Remove the hardcoded API key
-2. Use environment variables instead
-3. Add a `.gitignore` file to exclude sensitive data
 
 To use environment variables:
 ```bash
